@@ -15,9 +15,9 @@ new String:param_types_to_names[][MAX_PARAM_TYPE_NAME_LEN] =
 {
     "int",
     "string",
-    "player_name",
-    "player_team_name",
-    "team_name",
+    "player_name",      // converts userid into the player's name
+    "player_team_name", // converts userid into the player's team name
+    "team_name",        // converts teamid into team name (e.g., in the round_end event)
     "invalid"
 }
 

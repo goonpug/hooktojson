@@ -53,6 +53,9 @@ public OnPluginStart()
     RegServerCmd("hs_clear", Command_Clear)
 }
 
+// hs_url <url>
+//     Set the address that JSON data will be posted to. After using this
+//     command, any hooked events will be transmitted to this address.
 public Action:Command_Url(args)
 {
     if (args != 1)
@@ -86,6 +89,18 @@ public Action:Command_Url(args)
     return Plugin_Handled
 }
 
+// hs_hook <event-name> <parameter1-type> <parameter1-name> ...
+//     Hook an event for transmission.
+//     <event-name> is taken from this list:
+//         http://wiki.alliedmods.net/Counter-Strike:_Global_Offensive_Events
+//     <parameterX-type> should be one of the values in param_types_to_names.
+//         The use of each of these types is described in hs_event_params.inc.
+//     <parameterX-name> should be one of parameters named in the list of
+//         events linked above.
+// EXAMPLES:
+//     hs_hook round_start
+//     hs_hook bomb_defused player_name userid
+//     hs_hook player_death player_team_name userid player_name userid string weapon
 public Action:Command_Hook(args)
 {
     // note that num of args must be odd
@@ -134,6 +149,8 @@ public Action:Command_Hook(args)
     return Plugin_Handled
 }
 
+// hs_unhook <event-name>
+//     Stop transmitting <event-name>
 public Action:Command_Unhook(args)
 {
     if (args != 1)
@@ -169,6 +186,9 @@ public Action:Command_Unhook(args)
     return Plugin_Handled
 }
 
+// hs_clear <event-name>
+//     Clears all hooks (but does not clear the target address as set by
+//     hs_url).
 public Action:Command_Clear(args)
 {
     if (args != 0)
@@ -290,8 +310,6 @@ PostJsonEventQueue()
     json_object_set_new(json_events, "events", json_event_list)
     json_dump(json_events, post_data, sizeof(post_data), 0, false, false, false, true)
     CloseHandle(json_events)
-
-    PrintToServer("Posting: %s", post_data)
 
     curl_easy_setopt_string(curl, CURLOPT_POSTFIELDS, post_data)
     curl_easy_perform_thread(curl, OnCurlComplete)
